@@ -43,7 +43,7 @@ public class MineBoard {
     public MineBoard(int row, int col) {
         board = new int[row][col]; // size of the board
         seenBoard = new int[row][col];
-        mineCounter = row*col /10;
+        mineCounter = (int)(row*col/10);
         flagCounter = mineCounter;
 
         greenSquare =       new Texture("greenSquare.png");
@@ -90,7 +90,7 @@ public class MineBoard {
                     Location aboveRightMine = new Location(currentMine.getRow() - 1, currentMine.getCol() + 1);
                     Location belowLeftMine = new Location(currentMine.getRow() + 1, currentMine.getCol() - 1);
                     Location belowRightMine = new Location(currentMine.getRow() + 1, currentMine.getCol() + 1);
-                    if ((currentMine.getCol() == startLoc.getCol() && currentMine.getRow() == startLoc.getRow()) ||
+                    if (((currentMine.getCol() == startLoc.getCol() && currentMine.getRow() == startLoc.getRow()) ||
                             (aboveMine.getCol() == startLoc.getCol() && aboveMine.getRow() == startLoc.getRow()) ||
                             (belowMine.getCol() == startLoc.getCol() && belowMine.getRow() == startLoc.getRow()) ||
                             (leftMine.getCol() == startLoc.getCol() && leftMine.getRow() == startLoc.getRow()) ||
@@ -98,7 +98,8 @@ public class MineBoard {
                             (aboveLeftMine.getCol() == startLoc.getCol() && aboveLeftMine.getRow() == startLoc.getRow()) ||
                             (aboveRightMine.getCol() == startLoc.getCol() && aboveRightMine.getRow() == startLoc.getRow()) ||
                             (belowLeftMine.getCol() == startLoc.getCol() && belowLeftMine.getRow() == startLoc.getRow()) ||
-                            (belowRightMine.getCol() == startLoc.getCol() && belowRightMine.getRow() == startLoc.getRow())) {
+                            (belowRightMine.getCol() == startLoc.getCol() && belowRightMine.getRow() == startLoc.getRow())) ||
+                            (board[currentMine.getRow()][currentMine.getCol()] == -1)) {
                         allMinesCleared = false;
                         currentMine.setCol(randomNumGen());
                         currentMine.setRow(randomNumGen());
@@ -189,7 +190,6 @@ public class MineBoard {
         if(seenBoard[chosenLoc.getRow()][chosenLoc.getCol()] >= 1) {
             return;
         }
-
         seenBoard[chosenLoc.getRow()][chosenLoc.getCol()] = 2;
         if(board[chosenLoc.getRow()][chosenLoc.getCol()] != 0)
             return;
@@ -302,6 +302,10 @@ public class MineBoard {
 
     public Texture getRedFlag() { return redFlag; }
 
+    public void setMineCounter(int mineCounter) { this.mineCounter = mineCounter; }
+
+    public void setFlagCounter(int flagCounter) { this.flagCounter = flagCounter; }
+
     //methods focusing on the internal features;
 
     private int randomNumGen() {
@@ -320,7 +324,7 @@ public class MineBoard {
     }
 
     public boolean isGameOver(Location chosenLoc) {
-        if (board[chosenLoc.getRow()][chosenLoc.getCol()] == -1) {
+        if (board[chosenLoc.getRow()][chosenLoc.getCol()] == -1 && !checkIfFlagged(chosenLoc)) {
             discoveredBoard = true;
             return true;
         }
@@ -388,6 +392,7 @@ public class MineBoard {
     public boolean checkIfFlagged(Location loc) {
         return seenBoard[loc.getRow()][loc.getCol()] == 1;
     }
+
 }
 /*
 In 10x10 grid, there will be 10 mines

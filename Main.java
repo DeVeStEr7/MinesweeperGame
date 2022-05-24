@@ -16,8 +16,9 @@ public class Main implements Screen {
 
     private static final int rowL = 10;
     private static final int colL = 10;
-    protected static final int WORLD_WIDTH = rowL * 50 + 300; //will change later due to difficulty
-    protected static final int WORLD_HEIGHT = colL * 50; //will change later due to difficulty
+    protected static int WORLD_WIDTH = rowL * 50 + 300; //will change later due to difficulty
+    protected static int WORLD_HEIGHT = colL * 50; //will change later due to difficulty
+    private static int level = 1;
 
     private SpriteBatch spriteBatch;    //useful to drawing graphics
 
@@ -62,14 +63,19 @@ public class Main implements Screen {
             int x = Gdx.input.getX();
             int y = Gdx.input.getY();
             Location clickedLoc = board.mouseToBoardCoordinates(x, y);
-            if(firstpressed) {
-                firstpressed = false;
-                startPhase = true;
-                firstPress(clickedLoc);
+            if(x > WORLD_WIDTH - 200 && x < WORLD_WIDTH - 100 && y > WORLD_HEIGHT/2 - 100 && y < WORLD_HEIGHT/2 && (victory || gameOver)) {
+                newBoard();
             }
-            board.clearSpace(clickedLoc);
-            if(board.isGameOver(clickedLoc)) {
-                gameOver = true;
+            else if(clickedLoc.getRow() < rowL && clickedLoc.getCol() < colL) {
+                if (firstpressed) {
+                    firstpressed = false;
+                    startPhase = true;
+                    firstPress(clickedLoc);
+                }
+                else if (board.isGameOver(clickedLoc) && !board.checkIfFlagged(clickedLoc)) {
+                    gameOver = true;
+                }
+                board.clearSpace(clickedLoc);
             }
             //board.printBoard();
         }
@@ -77,13 +83,15 @@ public class Main implements Screen {
             int x = Gdx.input.getX();
             int y = Gdx.input.getY();
             Location clickedLoc = board.mouseToBoardCoordinates(x, y);
-            if(firstpressed) {
-                firstpressed = false;
-                startPhase = true;
-                firstPress(clickedLoc);
-            }
-            if(board.checkAvailableFlags() || board.checkIfFlagged(clickedLoc)) {
-                board.flipStatus(clickedLoc);
+            if(clickedLoc.getRow() < rowL && clickedLoc.getCol() < colL) {
+                if (firstpressed) {
+                    firstpressed = false;
+                    startPhase = true;
+                    firstPress(clickedLoc);
+                }
+                if (board.checkAvailableFlags() || board.checkIfFlagged(clickedLoc)) {
+                    board.flipStatus(clickedLoc);
+                }
             }
             //System.out.println(x + "," + y);
             //System.out.println(clickedLoc.getRow() + "," + clickedLoc.getCol());
@@ -103,22 +111,25 @@ public class Main implements Screen {
         spriteBatch.begin();
         spriteBatch.draw(board.getHappyFaceIcon(), WORLD_WIDTH - 200 , WORLD_HEIGHT / 2);
         spriteBatch.draw(board.getRedFlag(), WORLD_WIDTH - 200 , WORLD_HEIGHT / 2 + 150);
+        defaultFont.draw(spriteBatch, "Level " + level, WORLD_WIDTH - 180, WORLD_HEIGHT - 140);
         defaultFont.draw(spriteBatch,"" + board.getFlagCounter() , WORLD_WIDTH - 160, WORLD_HEIGHT / 2 + 175);
         if(gameOver) {
             defaultFont.draw(spriteBatch, "You Died!", WORLD_WIDTH - 180, WORLD_HEIGHT / 2 - 20);
             spriteBatch.draw(board.getSadFaceIcon(), WORLD_WIDTH - 200 , WORLD_HEIGHT / 2);
             board.draw(spriteBatch);
+            getMouseInput();
         }
         else if(victory) {
             defaultFont.draw(spriteBatch, "You Won!", WORLD_WIDTH - 180, WORLD_HEIGHT / 2 - 20);
             spriteBatch.draw(board.getWinFaceIcon(), WORLD_WIDTH - 200 , WORLD_HEIGHT / 2);
             board.draw(spriteBatch);
+            getMouseInput();
         }
         else {
             board.draw(spriteBatch);
             getMouseInput();
             int counter = board.getSeenBoardCounter();
-            if (counter >= rowL * colL * 2 - board.getMineCounter() * 2 + 1) {
+            if (counter >= rowL * colL * 2 - board.getMineCounter() * 2) {
                 victory = true;
             }
         }
@@ -127,6 +138,25 @@ public class Main implements Screen {
     }
 
 
+    public void newBoard() {
+        board = new MineBoard(rowL,colL);
+        firstpressed = true;
+        if(victory && board.getMineCounter() <= rowL * colL / 2) {
+            board.setMineCounter(board.getMineCounter() + level);
+            level++;
+            board.setFlagCounter(board.getMineCounter());
+        }
+        else if(board.getMineCounter() > rowL * colL / 2) {
+            level++;
+        }
+        else if(gameOver){
+            level = 1;
+            //board.setMineCounter(board.getMineCounter());
+            //board.setFlagCounter(board.getMineCounter());
+        }
+        gameOver = false;
+        victory = false;
+    }
 
     //all of these leave alone
     @Override
