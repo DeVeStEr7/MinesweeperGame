@@ -110,17 +110,19 @@ public class Main implements Screen {
         //all drawing of graphics MUST be in between begin/end
         spriteBatch.begin();
         spriteBatch.draw(board.getHappyFaceIcon(), WORLD_WIDTH - 200 , WORLD_HEIGHT / 2);
-        spriteBatch.draw(board.getRedFlag(), WORLD_WIDTH - 200 , WORLD_HEIGHT / 2 + 150);
-        defaultFont.draw(spriteBatch, "Level " + level, WORLD_WIDTH - 180, WORLD_HEIGHT - 140);
-        defaultFont.draw(spriteBatch,"" + board.getFlagCounter() , WORLD_WIDTH - 160, WORLD_HEIGHT / 2 + 175);
+        spriteBatch.draw(board.getRedFlag(), WORLD_WIDTH - 185 , WORLD_HEIGHT / 2 - 50);
+        defaultFont.draw(spriteBatch, "Level " + level, WORLD_WIDTH - 175, WORLD_HEIGHT - 130);
+        defaultFont.draw(spriteBatch,"" + board.getFlagCounter() , WORLD_WIDTH - 145, WORLD_HEIGHT / 2 - 25);
         if(gameOver) {
-            defaultFont.draw(spriteBatch, "You Died!", WORLD_WIDTH - 180, WORLD_HEIGHT / 2 - 20);
+            defaultFont.draw(spriteBatch, "You Died!", WORLD_WIDTH - 180, WORLD_HEIGHT / 2 - 70);
+            defaultFont.draw(spriteBatch, "Click Smiley to play again.", WORLD_WIDTH - 230, WORLD_HEIGHT/2 - 120);
             spriteBatch.draw(board.getSadFaceIcon(), WORLD_WIDTH - 200 , WORLD_HEIGHT / 2);
             board.draw(spriteBatch);
             getMouseInput();
         }
         else if(victory) {
-            defaultFont.draw(spriteBatch, "You Won!", WORLD_WIDTH - 180, WORLD_HEIGHT / 2 - 20);
+            defaultFont.draw(spriteBatch, "You Won!", WORLD_WIDTH - 180, WORLD_HEIGHT / 2 - 70);
+            defaultFont.draw(spriteBatch, "Click Smiley for the next level.", WORLD_WIDTH - 240, WORLD_HEIGHT/2 - 120);
             spriteBatch.draw(board.getWinFaceIcon(), WORLD_WIDTH - 200 , WORLD_HEIGHT / 2);
             board.draw(spriteBatch);
             getMouseInput();
